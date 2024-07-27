@@ -16,11 +16,23 @@ export class PdfService {
     // Generate the final HTML by injecting data
     const finalHtml = template(data);
 
-    // Generate the PDF
+    // Launch Puppeteer
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+
+    // Set content and wait for all styles to be applied
     await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
-    const pdfBuffer = await page.pdf({ format: 'A4' });
+
+    // Generate the PDF
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      displayHeaderFooter: true,
+      headerTemplate: '',
+      footerTemplate: '',
+      printBackground: true,
+    });
+
+    // Close Puppeteer
     await browser.close();
 
     // Save the PDF to the public directory
